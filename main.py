@@ -12,9 +12,10 @@ from commands.clima import Clima
 # Cargar variables de entorno (por ahora solo el token del bot)
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 print(TOKEN)
-contador: Contador = Contador()
-clima: Clima = Clima()
+print(WEATHER_API_KEY)
+
 
 # Habilitar el logger, según la documentación de la API
 logging.basicConfig(
@@ -25,6 +26,9 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 connection = SqliteConnection()
 connection.define_data()
+
+contador: Contador = Contador(connection)
+clima: Clima = Clima(connection, WEATHER_API_KEY)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -62,6 +66,12 @@ async def coords(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text("Sintaxis: /coordenadas o /coordenadas <latitud> <longitud>")
 
 
+async def weather(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    response = await clima.get_weather(user)
+    await update.message.reply_text(response.json())
+
+
 def main() -> None:
     application = Application.builder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
@@ -69,6 +79,7 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
     application.add_handler(CommandHandler("contar", contar))
     application.add_handler(CommandHandler("coordenadas", coords))
+    application.add_handler(CommandHandler("clima", weather))
 
     application.run_polling()
 
