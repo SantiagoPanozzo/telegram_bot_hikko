@@ -1,8 +1,8 @@
-from telegram import User
 from database.sqlite_connection import SqliteConnection
+from telegram import User
 
 
-class Contador:
+class ContadorService:
     def __init__(self, db: SqliteConnection = SqliteConnection()):
         self.db = db
 

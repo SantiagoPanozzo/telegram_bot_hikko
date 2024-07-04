@@ -1,21 +1,15 @@
-from database.sqlite_connection import SqliteConnection
-from telegram import User
+from telegram import Update
+from telegram.ext import ContextTypes
+
 from services.clima_service import ClimaService
+from database.sqlite_connection import SqliteConnection
+
+from utils.load_vars import env_vars
+
+clima = ClimaService(SqliteConnection(), env_vars["WEATHER_API_KEY"])
 
 
-class Clima:
-    def __init__(self, db: SqliteConnection = SqliteConnection(), api_key: str = None):
-        self.db = db
-        self.api_key = api_key
-
-    async def set_coords(self, lat: float, lon: float, user: User):
-        self.db.execute(f"INSERT OR IGNORE INTO user (user_id) VALUES ({user.id})")
-        self.db.execute(f"UPDATE user SET latitude = {lat}, longitude = {lon} WHERE user_id = {user.id}")
-
-    async def get_coords(self, user: User):
-        return self.db.fetchone(f"SELECT latitude, longitude FROM user WHERE user_id = {user.id}")
-
-    async def get_weather(self, user: User):
-        lat, lon = await self.get_coords(user)
-        return ClimaService(self.api_key).query(lat, lon)
-
+async def command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    response = await clima.get_weather(user)
+    await update.message.reply_text(response.json())

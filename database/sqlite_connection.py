@@ -6,6 +6,7 @@ class SqliteConnection:
         self.database_name = "database/bot_hikko.db"
         self.connection = sqlite3.connect(self.database_name)
         self.cursor = self.connection.cursor()
+        self.define_data()
 
     def define_data(self):
         self.execute(
