@@ -1,31 +1,25 @@
-import logging
-import os
-import utils.load_vars
-
-from telegram import ForceReply, Update
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
-from database.sqlite_connection import SqliteConnection
-
-from commands import start, contar, coordenadas, clima
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler
+from telegram.ext import filters
 
 from utils.load_vars import env_vars
+from utils.log import setup_logger
 
-# Habilitar el logger, según la documentación de la API
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-)
-logging.getLogger("httpx").setLevel(logging.WARNING)
+from commands.clima_command import ClimaCommand
+from commands.start_command import StartCommand
+from commands.contar_command import ContarCommand
+from commands.coordenadas_command import CoordenadasCommand
 
-logger = logging.getLogger(__name__)
+from handlers.button_handler import ButtonHandler
 
 
 def main() -> None:
+    setup_logger()
     application = Application.builder().token(env_vars["TOKEN"]).build()
-    application.add_handler(CommandHandler("start", start.command))
-    application.add_handler(CommandHandler("contar", contar.command))
-    application.add_handler(CommandHandler("coordenadas", coordenadas.command))
-    application.add_handler(CommandHandler("clima", clima.command))
-
+    application.add_handler(CommandHandler("start", StartCommand.command))
+    application.add_handler(CommandHandler("contar", ContarCommand.command))
+    application.add_handler(CommandHandler("coordenadas", CoordenadasCommand.command))
+    application.add_handler(CommandHandler("clima", ClimaCommand.command))
+    application.add_handler(CallbackQueryHandler(ButtonHandler.handle))
     application.run_polling()
 
 
