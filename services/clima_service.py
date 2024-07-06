@@ -3,6 +3,7 @@ import requests
 from database.sqlite_connection import SqliteConnection
 from telegram import User
 from utils.load_vars import env_vars
+from services.location_service import get_coords
 
 
 url = 'https://api.openweathermap.org/data/2.5/find?'
@@ -33,17 +34,11 @@ def get_pretty_weather(lat: float, lon: float):
     return str.join("\n", respuesta)
 
 
-async def set_coords(lat: float, lon: float, user: User):
-    db.execute(f"INSERT OR IGNORE INTO user (user_id) VALUES ({user.id})")
-    db.execute(f"UPDATE user SET latitude = {lat}, longitude = {lon} WHERE user_id = {user.id}")
-
-
-async def get_coords(user: User):
-    return db.fetchone(f"SELECT latitude, longitude FROM user WHERE user_id = {user.id}")
-
-
 async def get_weather(user: User, pretty: bool = False) -> str:
-    lat, lon = await get_coords(user)
-    if pretty:
-        return get_pretty_weather(lat, lon)
-    return query(lat, lon)
+    try:
+        lat, lon = await get_coords(user)
+        if pretty:
+            return get_pretty_weather(lat, lon)
+        return query(lat, lon)
+    except TypeError:
+        return "No tienes coordenadas guardadas."

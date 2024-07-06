@@ -1,4 +1,4 @@
-from telegram import User, Update
+from telegram import User, Update, error
 from telegram.ext import ContextTypes
 
 from commands.base_command import BaseCommand
@@ -23,7 +23,10 @@ class ContarCommand(BaseCommand):
     @staticmethod
     async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         count = await ContarCommand.execute(update, context)
-        await update.callback_query.edit_message_text(
-            text=f"Has enviado {count} mensajes.",
-            reply_markup=StartCommand.menu
-        )
+        try:
+            await update.callback_query.edit_message_text(
+                text=f"Has enviado {count} mensajes.",
+                reply_markup=StartCommand.menu
+            )
+        except error.BadRequest:
+            pass

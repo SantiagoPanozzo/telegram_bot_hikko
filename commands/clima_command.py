@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import Update, error
 from telegram.ext import ContextTypes
 
 from commands.base_command import BaseCommand
@@ -23,4 +23,7 @@ class ClimaCommand(BaseCommand):
     @staticmethod
     async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         response = await ClimaCommand.execute(update, context)
-        await update.callback_query.edit_message_text(response, reply_markup=StartCommand.menu)
+        try:
+            await update.callback_query.edit_message_text(response, reply_markup=StartCommand.menu)
+        except error.BadRequest:
+            pass

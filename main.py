@@ -8,6 +8,7 @@ from commands.clima_command import ClimaCommand
 from commands.start_command import StartCommand
 from commands.contar_command import ContarCommand
 from commands.coordenadas_command import CoordenadasCommand
+from commands.location_command import LocationCommand
 
 from handlers.button_handler import ButtonHandler
 
@@ -20,8 +21,10 @@ def main() -> None:
     application.add_handler(CommandHandler("coordenadas", CoordenadasCommand.command))
     application.add_handler(CommandHandler("clima", ClimaCommand.command))
     application.add_handler(CallbackQueryHandler(ButtonHandler.handle))
+    application.add_handler(MessageHandler(filters.LOCATION, LocationCommand.command))
     application.run_polling()
 
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
