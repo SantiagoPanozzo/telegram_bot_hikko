@@ -11,6 +11,7 @@ from commands.coordenadas_command import CoordenadasCommand
 from commands.location_command import LocationCommand
 
 from handlers.button_handler import ButtonHandler
+from handlers.text_handler import TextHandler
 
 
 def main() -> None:
@@ -22,6 +23,7 @@ def main() -> None:
     application.add_handler(CommandHandler("clima", ClimaCommand.command))
     application.add_handler(CallbackQueryHandler(ButtonHandler.handle))
     application.add_handler(MessageHandler(filters.LOCATION, LocationCommand.command))
+    application.add_handler(MessageHandler(filters.TEXT, TextHandler.handle))
     application.run_polling()
 
 
