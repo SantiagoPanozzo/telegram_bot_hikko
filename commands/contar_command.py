@@ -16,6 +16,6 @@ class ContarCommand(BaseCommand):
     async def command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         count = await ContarCommand.execute(update, context)
         await update.message.reply_text(
-            text=f"Has enviado {count} mensajes.",
+            text=f"Has contado {count} veces.",
             reply_markup=StartCommand.menu
         )
