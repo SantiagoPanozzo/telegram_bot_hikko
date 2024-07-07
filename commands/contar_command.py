@@ -19,14 +19,3 @@ class ContarCommand(BaseCommand):
             text=f"Has enviado {count} mensajes.",
             reply_markup=StartCommand.menu
         )
-
-    @staticmethod
-    async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        count = await ContarCommand.execute(update, context)
-        try:
-            await update.callback_query.edit_message_text(
-                text=f"Has enviado {count} mensajes.",
-                reply_markup=StartCommand.menu
-            )
-        except error.BadRequest:
-            pass

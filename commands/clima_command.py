@@ -20,10 +20,3 @@ class ClimaCommand(BaseCommand):
         response = await ClimaCommand.execute(update, context)
         await update.message.reply_markdown(response, reply_markup=StartCommand.menu)
 
-    @staticmethod
-    async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        response = await ClimaCommand.execute(update, context)
-        try:
-            await update.callback_query.edit_message_text(response, reply_markup=StartCommand.menu)
-        except error.BadRequest:
-            pass

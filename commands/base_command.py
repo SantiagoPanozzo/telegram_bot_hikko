@@ -10,7 +10,3 @@ class BaseCommand:
     @staticmethod
     async def command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         raise NotImplementedError("Falta implementar el código del comando.")
-
-    @staticmethod
-    async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        raise NotImplementedError("Falta implementar el código del callback.")
